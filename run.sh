@@ -22,6 +22,8 @@
 set -e
 set -u
 
+PID=$$
+
 log () {
    echo "$(date --rfc-3339=seconds) [$PID] $@"
 }
@@ -31,10 +33,6 @@ source config.sh
 MAX_SLEEP=${MAX_SLEEP:-600}
 DATA_FOLDER=${DATA_FOLDER:-/var/www/html/}
 LOGFILE=${LOGFILE:-umap-overpass-cacher.log}
-
-# Log all activity to file.
-exec >> $LOGFILE 2>&1
-trap 'savelog -c 28 -n $LOGFILE > /dev/null' EXIT
 
 case $1 in
    --dry-run|-dr)
@@ -46,6 +44,11 @@ case $1 in
       ;;
 esac
 
+if ! [[ $DR ]]; then
+   # Log all activity to file.
+   exec >> $LOGFILE 2>&1
+   trap 'savelog -c 28 -n $LOGFILE > /dev/null' EXIT
+fi
 
 while read url; do
    out=$( echo "$url"|md5sum|cut -d " " -f 1 ).json
