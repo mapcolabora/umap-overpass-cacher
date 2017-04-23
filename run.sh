@@ -8,7 +8,7 @@ DATA_FOLDER=${DATA_FOLDER:-/var/www/html/}
 
 while read url; do
    out=$( echo "$url"|md5sum|cut -d " " -f 1 ).json
-   echo "Downloading quey to $DATA_FOLDER/$out"
+   echo "Downloading query to $DATA_FOLDER/$out"
    wget -q -O "$DATA_FOLDER/$out" "$url"
    RAND=$(( $RANDOM % $MAX_SLEEP ))
    echo "Sleeping for $RAND seconds between queries"
