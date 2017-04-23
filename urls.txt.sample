@@ -1,0 +1,1 @@
+http://overpass-api.de/api/interpreter?data=[out:json][timeout:25];area(3600345740)->.searchArea;(way["cycleway"="opposite"](area.searchArea);way["bicycle"="yes"]["highway"!="cycleway"](area.searchArea)%3Bway[%22bicycle%22%3D%22designated%22]["highway"!="cycleway"](area.searchArea)%3B)%3Bout%20body%3B%3E%3Bout%20skel%20qt%3B%0A
