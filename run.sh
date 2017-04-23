@@ -33,6 +33,8 @@ source config.sh
 MAX_SLEEP=${MAX_SLEEP:-600}
 DATA_FOLDER=${DATA_FOLDER:-/var/www/html/}
 LOGFILE=${LOGFILE:-umap-overpass-cacher.log}
+DR=0
+NOW=0
 
 case $1 in
    --dry-run|-dr)
@@ -42,23 +44,30 @@ case $1 in
    --now|-n)
       NOW=1
       ;;
+   *)
+      DR=0
+      NOW=0
+      ;;
 esac
 
-if ! [[ $DR ]]; then
+if ! [[ $DR -eq 1 ]]; then
    # Log all activity to file.
    exec >> $LOGFILE 2>&1
    trap 'savelog -c 28 -n $LOGFILE > /dev/null' EXIT
 fi
 
 while read url; do
+   if [[ $DR -eq 1 ]]; then
+      log "Starting whith query $url" 
+   fi
    out=$( echo "$url"|md5sum|cut -d " " -f 1 ).json
    log "Downloading query to $DATA_FOLDER/$out"
-   if ! [[ $DR ]]; then
+   if ! [[ $DR -eq 1 ]]; then
        wget -q -O "$DATA_FOLDER/$out" "$url"
    fi
    RAND=$(( $RANDOM % $MAX_SLEEP ))
    log "Sleeping for $RAND seconds between queries"
-   if ! [[ $NOW ]]; then
+   if ! [[ $NOW -eq 1 ]]; then
       sleep $RAND
    fi
 
