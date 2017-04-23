@@ -18,7 +18,7 @@ esac
 
 while read url; do
    out=$( echo "$url"|md5sum|cut -d " " -f 1 ).json
-   echo "Downloading quey to $DATA_FOLDER/$out"
+   echo "Downloading query to $DATA_FOLDER/$out"
    if ! [[ $DR ]]; then
        wget -q -O "$DATA_FOLDER/$out" "$url"
    fi
