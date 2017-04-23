@@ -1,1 +1,8 @@
-DATA_FOLDER=/var/www/html
+# Where the runtime log will be stored, it has built-in log rotation set for 28 iterations:
+#LOGFILE=umap-overpass-cacher.log
+
+# Folder where the cached queries will be stored:
+#DATA_FOLDER=/var/www/html
+
+# Time to wait between requeste, in seconds. Keep it high in order to avoid overflowding the Overpass API server:
+#MAX_SLEEP=600
