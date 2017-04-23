@@ -1,9 +1,40 @@
 #!/bin/bash
+##    Alejandro Suarez Cebrian (Coordinador del grupo de Mapeado Colaborativo)
+##    Hector Ochoa Ortiz (Coordinador del grupo de Mapeado Colaborativo)
+##    Copyright (C) 2017  Alejandro Suarez Cebrian
+##    Copyright (C) 2017  Hector Ochoa Ortiz
+##
+##    This program is free software: you can redistribute it and/or modify
+##    it under the terms of the GNU General Public License as published by
+##    the Free Software Foundation, either version 3 of the License, or
+##    any later version.
+##
+##    This program is distributed in the hope that it will be useful,
+##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##    GNU General Public License for more details.
+##
+##    You should have received a copy of the GNU General Public License
+##    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+
+# Exit on errors and unset variables
+set -e
+set -u
+
+log () {
+   echo "$(date --rfc-3339=seconds) [$PID] $@"
+}
 
 source config.sh
 
 MAX_SLEEP=${MAX_SLEEP:-600}
 DATA_FOLDER=${DATA_FOLDER:-/var/www/html/}
+LOGFILE=${LOGFILE:-umap-overpass-cacher.log}
+
+# Log all activity to file.
+exec >> $LOGFILE 2>&1
+trap 'savelog -c 28 -n $LOGFILE > /dev/null' EXIT
 
 case $1 in
    --dry-run|-dr)
@@ -18,12 +49,12 @@ esac
 
 while read url; do
    out=$( echo "$url"|md5sum|cut -d " " -f 1 ).json
-   echo "Downloading query to $DATA_FOLDER/$out"
+   log "Downloading query to $DATA_FOLDER/$out"
    if ! [[ $DR ]]; then
        wget -q -O "$DATA_FOLDER/$out" "$url"
    fi
    RAND=$(( $RANDOM % $MAX_SLEEP ))
-   echo "Sleeping for $RAND seconds between queries"
+   log "Sleeping for $RAND seconds between queries"
    if ! [[ $NOW ]]; then
       sleep $RAND
    fi
