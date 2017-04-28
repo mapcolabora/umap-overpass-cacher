@@ -28,7 +28,9 @@ log () {
    echo "$(date --rfc-3339=seconds) [$PID] $@"
 }
 
-source config.sh
+
+BASEDIR=$(dirname "$0")
+source ${BASEDIR}/config.sh
 
 MAX_SLEEP=${MAX_SLEEP:-600}
 DATA_FOLDER=${DATA_FOLDER:-/var/www/html/}
@@ -71,4 +73,4 @@ while read url; do
       sleep $RAND
    fi
 
-done<urls.txt
+done<${BASEDIR}/urls.txt
